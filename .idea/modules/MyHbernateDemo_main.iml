@@ -47,5 +47,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="com.netflix.feign:feign-gson:8.18.0" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Desktop/json-lib-2.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

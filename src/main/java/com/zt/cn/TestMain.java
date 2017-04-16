@@ -4,17 +4,24 @@ package com.zt.cn;
  * Created by apple on 2017/4/16.
  */
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import net.sf.json.JSONArray;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StandardBasicTypes;
 
 import javax.persistence.Id;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class TestMain {
@@ -42,7 +49,7 @@ public class TestMain {
 //            testMain.addEntity(entity);//增加一条数据
 //            testMain.deleteEntity(entity,13);//删除id为13的数据
 //            testMain.saveOrUpdate(entity);//保存或者增加一条数据
-//            testMain.queryEntity();//自定义sql语句查询
+            testMain.queryEntity();//自定义sql语句查询
 
             transaction.commit();
 
@@ -86,12 +93,23 @@ public class TestMain {
     }
 
     private void queryEntity() {
-        List<String> list= session.createSQLQuery(" select * from websites")
-                .addScalar("name", StandardBasicTypes.STRING)//指定要查询的字段
-                .list();
-       for(String entity:list){
-           System.out.println("结果："+entity);
-       }
+
+
+//        String hql="from websites";
+//        List<MyEntity> list1=session.createQuery(hql).list();
+//
+//        List<MyEntity> list = session.createSQLQuery(" select * from websites")
+//                .addScalar("id", StandardBasicTypes.INTEGER)
+//                .addScalar("name", StandardBasicTypes.STRING)//指定要查询的字段
+//                .addScalar("url", StandardBasicTypes.STRING)
+//                .addScalar("alexa", StandardBasicTypes.INTEGER)
+//                .addScalar("country", StandardBasicTypes.STRING)
+//                .list();
+
+        List<MyEntity> entities = session.createCriteria(MyEntity.class).list();
+        Gson gson = new Gson();
+        String str = gson.toJson(entities);
+        System.out.println("封装后的json数据为:" + str);
     }
 
 
