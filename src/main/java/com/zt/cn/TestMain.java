@@ -7,10 +7,7 @@ package com.zt.cn;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import net.sf.json.JSONArray;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.StandardBasicTypes;
@@ -50,9 +47,12 @@ public class TestMain {
 //            testMain.deleteEntity(entity,13);//删除id为13的数据
 //            testMain.saveOrUpdate(entity);//保存或者增加一条数据
             testMain.queryEntity();//自定义sql语句查询
+            testMain.hqlQuery();
+            testMain.singalQuery();
+            testMain.customQuery();
+
 
             transaction.commit();
-
             session.close();
             sessionFactory.close();
 
@@ -92,25 +92,49 @@ public class TestMain {
         session.saveOrUpdate(entity);
     }
 
+    /**
+     * 从数据库中查询出数据并转成json字符串
+     */
     private void queryEntity() {
-
-
-//        String hql="from websites";
-//        List<MyEntity> list1=session.createQuery(hql).list();
-//
-//        List<MyEntity> list = session.createSQLQuery(" select * from websites")
-//                .addScalar("id", StandardBasicTypes.INTEGER)
-//                .addScalar("name", StandardBasicTypes.STRING)//指定要查询的字段
-//                .addScalar("url", StandardBasicTypes.STRING)
-//                .addScalar("alexa", StandardBasicTypes.INTEGER)
-//                .addScalar("country", StandardBasicTypes.STRING)
-//                .list();
-
         List<MyEntity> entities = session.createCriteria(MyEntity.class).list();
         Gson gson = new Gson();
         String str = gson.toJson(entities);
         System.out.println("封装后的json数据为:" + str);
     }
 
+    /**
+     * 通过hql语句查询所有数据，并转换为json字符串
+     */
+    private void hqlQuery(){
+        String hql="from MyEntity";
+        List<MyEntity> myEntities= session.createQuery(hql).list();
+        for(MyEntity entity:myEntities){
+            System.out.println("name:"+entity.getName()+" url:"+entity.getUrl());
+        }
+        Gson gson=new Gson();
+        String json=gson.toJson(myEntities);
+        System.out.println("转换后的json数据为:"+json);
+    }
 
+    /**
+     * 查询单个字段
+     */
+    private void singalQuery(){
+        String hql="select url from MyEntity";
+        List<String> list= session.createQuery(hql).list();
+        for(String s:list){
+            System.out.println(s);
+        }
+    }
+
+    private void customQuery(){
+        String hql="from MyEntity where name=? and url=?";
+        Query query=session.createQuery(hql);
+        query.setParameter(0,"百度");
+        query.setParameter(1,"http://www.baidu.com");
+        List<MyEntity> list=query.list();
+        for (MyEntity entity:list){
+            System.out.println("name:"+entity.getName()+"url:"+entity.getUrl());
+        }
+    }
 }
